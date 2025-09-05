@@ -10,11 +10,7 @@ Highlights
 - Classification heuristics: USB 2.0, 3.2 Gen1/Gen2/2x2, USB4/Thunderbolt; DP Alt Mode hints.
 - Results history persisted to `.usb_cable_results.json` with optional labels.
 
-Install
-```
-pip install usb-cable-tester
-```
-From source:
+Install from source:
 ```
 pip install .
 ```
@@ -32,4 +28,3 @@ Notes
 - Use a fast external SSD to avoid the device being the bottleneck.
 - Linux with `/sys/class/typec` and `boltctl` provides deeper cable/Thunderbolt insights.
 - TUI requires a real terminal/TTY.
-
