@@ -51,8 +51,8 @@ def _format_vol(v: Volume) -> str:
     return f"{label}({v.mount_point})" + (" - " + ", ".join(attrs) if attrs else "")
 
 
-def run_wizard(initial_info: Dict[str, Any]) -> int:
-    print(get_banner())
+def run_wizard(initial_info: Dict[str, Any], banner_style: str = "full") -> int:
+    print(get_banner(banner_style))
     print()
     print("USB-C Cable Tester — Guided Wizard")
     print("This wizard helps you safely test a cable by measuring throughput and checking system data.")

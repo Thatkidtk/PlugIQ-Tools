@@ -13,9 +13,9 @@ from .store import save_result
 from .banner import get_banner
 
 
-def run_tui(initial_info: Optional[Dict[str, Any]] = None) -> int:
+def run_tui(initial_info: Optional[Dict[str, Any]] = None, banner_style: str = "full") -> int:
     try:
-        return curses.wrapper(lambda stdscr: _main(stdscr, initial_info or sysinfo.get_system_info()))
+        return curses.wrapper(lambda stdscr: _main(stdscr, initial_info or sysinfo.get_system_info(), banner_style))
     except curses.error:
         print("TUI requires a real terminal/TTY.")
         return 2
@@ -84,7 +84,7 @@ def _input_line(stdscr, prompt: str) -> str:
         return ""
 
 
-def _main(stdscr, info: Dict[str, Any]) -> int:
+def _main(stdscr, info: Dict[str, Any], banner_style: str) -> int:
     curses.curs_set(0)
     stdscr.nodelay(False)
     state = State(info)
@@ -92,7 +92,7 @@ def _main(stdscr, info: Dict[str, Any]) -> int:
     while True:
         if state.step == 0:
             body = []
-            for line in get_banner().splitlines():
+            for line in get_banner(banner_style).splitlines():
                 body.append(line)
             body += [
                 "",

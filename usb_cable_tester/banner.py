@@ -10,14 +10,26 @@ PP      LLLLLL     UUUUU    GGGGGG    IIIII   QQQQQQ
 """.strip("\n")
 
 
-SUBTITLE = "PlugIQ Cable Tester"
-
-
 COMPACT = r"""
 PLUGIQ • Cable Tester
 """.strip("\n")
 
 
-def get_banner(compact: bool = False) -> str:
-    return (COMPACT if compact else FULL)
+BLOCK = (
+    """
+▄▖▜     ▄▖▄▖  
+▙▌▐ ▌▌▛▌▐ ▌▌  
+▌ ▐▖▙▌▙▌▟▖█▌  
+      ▄▌   ▘
+"""
+    .strip("\n")
+)
 
+
+def get_banner(style: str = "full") -> str:
+    style = (style or "full").lower()
+    if style == "compact":
+        return COMPACT
+    if style == "block":
+        return BLOCK
+    return FULL

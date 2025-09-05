@@ -33,6 +33,8 @@ def main() -> int:
     parser.add_argument("--wizard", action="store_true", help="Run the guided test wizard with safety checks")
     parser.add_argument("--dry-run", action="store_true", help="Do not write any data; show what would happen")
     parser.add_argument("--tui", action="store_true", help="Launch the full-screen TUI (curses) on top of the wizard")
+    banner_default = os.environ.get("USBCT_BANNER_STYLE", "full")
+    parser.add_argument("--banner-style", choices=["full", "compact", "block"], default=banner_default, help="Select banner style for wizard/TUI")
 
     args = parser.parse_args()
 
@@ -61,13 +63,13 @@ def main() -> int:
         except Exception as e:
             print("Failed to start TUI:", e)
             return 2
-        return run_tui(initial_info=info)
+        return run_tui(initial_info=info, banner_style=args.banner_style)
 
     # Wizard flow
     if args.wizard:
         from .wizard import run_wizard
 
-        return run_wizard(initial_info=info)
+        return run_wizard(initial_info=info, banner_style=args.banner_style)
 
     speed_result = None
     if args.run_speed_test:

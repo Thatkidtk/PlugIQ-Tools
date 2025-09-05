@@ -1,11 +1,10 @@
 USB-C Cable Tester (MVP)
 
 ```
-PPPPPP  LL        UU   UU   GGGGG    IIIII    QQQQQ
-PP   PP LL        UU   UU  GG          II    QQ   QQ
-PPPPPP  LL        UU   UU  GG  GGG     II    QQ   QQ
-PP      LL        UU   UU  GG   GG     II    QQ  QQQ
-PP      LLLLLL     UUUUU    GGGGGG    IIIII   QQQQQQ
+▄▖▜     ▄▖▄▖  
+▙▌▐ ▌▌▛▌▐ ▌▌  
+▌ ▐▖▙▌▙▌▟▖█▌  
+      ▄▌   ▘
 ```
 PlugIQ Cable Tester
 
@@ -59,6 +58,15 @@ TUI mode:
 python -m usb_cable_tester --tui
 ```
 Use arrow keys and on-screen shortcuts to navigate.
+
+Banner style:
+```
+# full | compact | block
+python -m usb_cable_tester --wizard --banner-style block
+
+# or set an env var (applies to TUI/wizard)
+USBCT_BANNER_STYLE=block python -m usb_cable_tester --tui
+```
 
 Safety notes:
 - macOS: Use a fast external SSD connected through the cable under test. If you have Thunderbolt, the Thunderbolt report may include link status (e.g., 40 Gb/s) and sometimes cable details.
