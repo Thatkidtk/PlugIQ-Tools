@@ -9,7 +9,7 @@ description = "USB-C cable capability probe and throughput tester (CLI/TUI)"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
-  { name = "Your Name" }
+  { name = "Thatkidtk" }
 ]
 keywords = ["usb", "usb-c", "thunderbolt", "usb4", "cli", "tui", "displayport"]
 classifiers = [
@@ -22,9 +22,8 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/yourname/usb-cable-tester"
-Issues = "https://github.com/yourname/usb-cable-tester/issues"
+Homepage = "https://github.com/Thatkidtk/PlugIQ-Tools"
+Issues = "https://github.com/Thatkidtk/PlugIQ-Tools/issues"
 
 [project.scripts]
 usbct = "usb_cable_tester.cli:main"
-
