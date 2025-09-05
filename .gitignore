@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Local results DB
+.usb_cable_results.json
+
+# macOS
+.DS_Store
+
