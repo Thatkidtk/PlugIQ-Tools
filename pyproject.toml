@@ -20,6 +20,7 @@ classifiers = [
   "Topic :: System :: Hardware",
 ]
 dependencies = []
+license = { file = "LICENSE" }
 
 [project.urls]
 Homepage = "https://github.com/Thatkidtk/PlugIQ-Tools"
@@ -27,3 +28,7 @@ Issues = "https://github.com/Thatkidtk/PlugIQ-Tools/issues"
 
 [project.scripts]
 usbct = "usb_cable_tester.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["usb_cable_tester*"]
