@@ -67,6 +67,7 @@ python -m usb_cable_tester --wizard --banner-style block
 # or set an env var (applies to TUI/wizard)
 USBCT_BANNER_STYLE=block python -m usb_cable_tester --tui
 ```
+Default banner is the block style shown above.
 
 Safety notes:
 - macOS: Use a fast external SSD connected through the cable under test. If you have Thunderbolt, the Thunderbolt report may include link status (e.g., 40 Gb/s) and sometimes cable details.

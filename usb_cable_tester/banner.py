@@ -26,7 +26,7 @@ BLOCK = (
 )
 
 
-def get_banner(style: str = "full") -> str:
+def get_banner(style: str = "block") -> str:
     style = (style or "full").lower()
     if style == "compact":
         return COMPACT

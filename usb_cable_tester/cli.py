@@ -33,7 +33,7 @@ def main() -> int:
     parser.add_argument("--wizard", action="store_true", help="Run the guided test wizard with safety checks")
     parser.add_argument("--dry-run", action="store_true", help="Do not write any data; show what would happen")
     parser.add_argument("--tui", action="store_true", help="Launch the full-screen TUI (curses) on top of the wizard")
-    banner_default = os.environ.get("USBCT_BANNER_STYLE", "full")
+    banner_default = os.environ.get("USBCT_BANNER_STYLE", "block")
     parser.add_argument("--banner-style", choices=["full", "compact", "block"], default=banner_default, help="Select banner style for wizard/TUI")
 
     args = parser.parse_args()
