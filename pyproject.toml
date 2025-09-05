@@ -3,15 +3,15 @@ requires = ["setuptools>=67", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "usb-cable-tester"
+name = "plugiq-tools"
 version = "1.0.0"
-description = "USB-C cable capability probe and throughput tester (CLI/TUI)"
+description = "Smart USB-C Cable Tester — probe capabilities & measure real-world throughput"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
   { name = "Thatkidtk" }
 ]
-keywords = ["usb", "usb-c", "thunderbolt", "usb4", "cli", "tui", "displayport"]
+keywords = ["usb", "usb-c", "thunderbolt", "usb4", "cli", "tui", "displayport", "plugiq"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
@@ -20,15 +20,19 @@ classifiers = [
   "Topic :: System :: Hardware",
 ]
 dependencies = []
-license = { file = "LICENSE" }
+license = { text = "MIT" }
 
 [project.urls]
 Homepage = "https://github.com/Thatkidtk/PlugIQ-Tools"
 Issues = "https://github.com/Thatkidtk/PlugIQ-Tools/issues"
 
 [project.scripts]
-usbct = "usb_cable_tester.cli:main"
+plugiq = "usb_cable_tester.__main__:main"
+usbct = "usb_cable_tester.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["usb_cable_tester*"]
+
+[tool.setuptools.package-data]
+usb_cable_tester = ["py.typed"]

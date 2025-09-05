@@ -1,5 +1,9 @@
 USB-C Cable Tester (MVP)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![CI](https://github.com/Thatkidtk/PlugIQ-Tools/actions/workflows/ci.yml/badge.svg)
+
 ```
 ▄▖▜     ▄▖▄▖  
 ▙▌▐ ▌▌▛▌▐ ▌▌  
@@ -28,14 +32,29 @@ Quick Start
 
 Requirements: Python 3.8+
 
+Install (from source):
+```
+pip install .
+plugiq --help
+```
+
 Run help:
 ```
 python -m usb_cable_tester --help
 ```
 
-Show system info only:
+Probe system info:
+```
+plugiq --show-system
+```
+or:
 ```
 python -m usb_cable_tester --show-system
+```
+
+Safe guided run (recommended):
+```
+plugiq --wizard
 ```
 
 Run a speed test against an external drive mount, label the cable, and save the result:
@@ -55,7 +74,7 @@ The wizard helps you pick a safe test path (preferably an external SSD), runs pr
 
 TUI mode:
 ```
-python -m usb_cable_tester --tui
+plugiq --tui
 ```
 Use arrow keys and on-screen shortcuts to navigate.
 
@@ -74,6 +93,24 @@ Safety notes:
 - Linux: If your kernel exposes Type‑C sysfs (`/sys/class/typec`), the tool will parse cable identity (including active/passive and max speed) when available. `boltctl` is used when present for Thunderbolt details.
 - Windows: Basic USB/Thunderbolt listing is attempted via PowerShell; depth depends on OS support.
  - The throughput test writes a temporary file to the selected path and removes it afterwards. The wizard blocks obviously unsafe targets (e.g., system root), warns when testing on internal drives, checks free space with margin, and limits default test size to reduce device wear and heat.
+
+What PlugIQ infers vs guarantees
+================================
+- Some cable details (e.g., e‑marker, DP Alt Mode, active/passive) aren’t always exposed by the OS. PlugIQ reports what it can infer from system probes and observed throughput. Use a fast external SSD to avoid underestimating the cable.
+
+Saved results format (example)
+==============================
+```
+[
+  {
+    "timestamp": "2025-09-05T01:43:51.358Z",
+    "label": "Short white USB-C",
+    "system": { "os": "darwin", "thunderbolt": { "source": "system_profiler_json", "data": ["..."] } },
+    "speed_test": { "file_size_mb": 1024, "write_mb_s": 920.1, "read_mb_s": 980.4, "path": "/Volumes/MySSD" },
+    "classification": { "summary": "USB 3.2 Gen 2 (10 Gb/s)", "reasons": ["USB bus advertises up to 10 Gb/s"] }
+  }
+]
+```
 
 Roadmap
 =======

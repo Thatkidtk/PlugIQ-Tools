@@ -23,16 +23,17 @@ def main() -> int:
     )
     parser.add_argument("--version", action="version", version=f"usb-cable-tester {__version__}")
 
-    parser.add_argument("--show-system", action="store_true", help="Print detected USB/Type-C/Thunderbolt info and exit")
-    parser.add_argument("--run-speed-test", action="store_true", help="Run a disk throughput test on the provided path")
-    parser.add_argument("--test-path", type=str, default=None, help="Directory path on the target device (e.g., external SSD mount)")
-    parser.add_argument("--file-size-mb", type=int, default=1024, help="Test file size in MB (default 1024)")
-    parser.add_argument("--label", type=str, default=None, help="Optional human-friendly cable label to store with results")
-    parser.add_argument("--save", action="store_true", help="Save results to .usb_cable_results.json in this folder")
-    parser.add_argument("--json", action="store_true", help="Output JSON for programmatic use")
-    parser.add_argument("--wizard", action="store_true", help="Run the guided test wizard with safety checks")
-    parser.add_argument("--dry-run", action="store_true", help="Do not write any data; show what would happen")
-    parser.add_argument("--tui", action="store_true", help="Launch the full-screen TUI (curses) on top of the wizard")
+    parser.add_argument("-i", "--show-system", action="store_true", help="Print detected USB/Type-C/Thunderbolt info and exit")
+    parser.add_argument("-r", "--run-speed-test", action="store_true", help="Run a disk throughput test on the provided path")
+    parser.add_argument("-p", "--test-path", type=str, default=None, help="Directory path on the target device (e.g., external SSD mount)")
+    parser.add_argument("-s", "--file-size-mb", type=int, default=1024, help="Test file size in MB (default 1024)")
+    parser.add_argument("-l", "--label", type=str, default=None, help="Optional human-friendly cable label to store with results")
+    parser.add_argument("-S", "--save", action="store_true", help="Save results to .usb_cable_results.json in this folder")
+    parser.add_argument("-j", "--json", action="store_true", help="Output JSON for programmatic use")
+    parser.add_argument("-w", "--wizard", action="store_true", help="Run the guided test wizard with safety checks")
+    parser.add_argument("-d", "--dry-run", action="store_true", help="Do not write any data; show what would happen")
+    parser.add_argument("-t", "--tui", action="store_true", help="Launch the full-screen TUI (curses) on top of the wizard")
+    parser.add_argument("--diagnostics", action="store_true", help="Print detailed probe data and classification reasons")
     banner_default = os.environ.get("USBCT_BANNER_STYLE", "block")
     parser.add_argument("--banner-style", choices=["full", "compact", "block"], default=banner_default, help="Select banner style for wizard/TUI")
 
@@ -40,9 +41,12 @@ def main() -> int:
 
     info = sysinfo.get_system_info()
 
-    if args.show_system and not args.run_speed_test:
+    if (args.show_system or args.diagnostics) and not args.run_speed_test and not (args.wizard or args.tui):
         if args.json:
-            print(json.dumps({"system": info}, indent=2))
+            payload = {"system": info}
+            if args.diagnostics:
+                payload["diagnostics"] = {"note": "includes raw probe data", "classification_preview": classify_result(info=info, speed_result=None)}
+            print(json.dumps(payload, indent=2))
         else:
             print("OS:", info.get("os"))
             if info.get("usb"):
@@ -54,6 +58,12 @@ def main() -> int:
             if info.get("typec"):
                 print("\nType-C Info:")
                 print(json.dumps(info["typec"], indent=2))
+            if info.get("display"):
+                print("\nDisplay Info:")
+                print(json.dumps(info["display"], indent=2))
+            if args.diagnostics:
+                print("\nClassification (preview):")
+                print(json.dumps(classify_result(info=info, speed_result=None), indent=2))
         return 0
 
     # TUI or wizard flow short-circuits; they run their own prompts
@@ -84,6 +94,7 @@ def main() -> int:
                 parser.error(str(e))
             for w in warnings:
                 print("Warning:", w)
+            print("Note: A temporary test file will be created and deleted after the test.")
         if args.dry_run:
             speed_result = {
                 "file_size_mb": args.file_size_mb,

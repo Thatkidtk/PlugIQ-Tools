@@ -1,88 +1,81 @@
-PlugIQ Tools — Agent & Contributor Guide
-=======================================
+Nice—got your repo. I can see the PlugIQ-Tools README, MIT license, pyproject.toml, and the usb_cable_tester/ package. The README already documents features, quick start, wizard/TUI flags, safety notes, and a roadmap (DP Alt Mode, active/passive detection, guided flows). ￼
 
-Purpose
--------
-- Build safe, cross‑platform tools to identify USB‑C cable capabilities and measure real‑world throughput (USB 2.0/3.x/USB4/Thunderbolt, DP Alt Mode hints).
-- Prioritize user safety and clarity. Never perform destructive actions.
+Here’s a fast, surgical audit + upgrades to make this feel like a polished, installable CLI that people trust on first contact:
 
-Safety Principles
------------------
-- Never write to system/home roots; prefer user‑selected external volumes.
-- Use conservative defaults (256 MB test file) and explicit preflight checks (free space, internal/network warnings).
-- Delete temporary files and sync writes explicitly.
-- Avoid elevated privileges. Parse OS tools read‑only (e.g., `system_profiler`, `lsusb`, `boltctl`).
+Tighten the packaging
 
-Repo Overview
--------------
-- `usb_cable_tester/cli.py` — CLI entry, flags, flow control.
-- `usb_cable_tester/wizard.py` — guided console wizard with safety prompts.
-- `usb_cable_tester/tui.py` — curses TUI wrapper around the wizard.
-- `usb_cable_tester/system_info.py` — OS‑specific probes (USB/Type‑C/TB/Display).
-- `usb_cable_tester/speed_test.py` — sequential write/read benchmark.
-- `usb_cable_tester/classify.py` — capability heuristics.
-- `usb_cable_tester/safety.py` — preflight checks and path validation.
-- `usb_cable_tester/volumes.py` — volume detection across OSes.
-- `usb_cable_tester/store.py` — save labeled results to `.usb_cable_results.json`.
-- `usb_cable_tester/banner.py` — ASCII banners. Default: block style.
-- `tests/` — pytest suite (safety, speed, classification).
+Add a console entry point so users can run plugiq (or usbct) after pip install:
 
-UX Guidelines
--------------
-- Default banner style is `block` (can override with `--banner-style` or `USBCT_BANNER_STYLE`).
-- Wizard/TUI must always explain what happens next and why; show warnings clearly.
-- Keep CLI output compact by default; use `--json` for structured output.
+# pyproject.toml
 
-CLI Flags (summary)
--------------------
-- `--wizard` / `--tui` — interactive modes (recommended).
-- `--run-speed-test --test-path <dir> [--file-size-mb N]` — one‑shot test with safety checks.
-- `--show-system [--json]` — print detected capabilities.
-- `--label` `--save` — tag and persist results.
-- `--banner-style full|compact|block` — select banner (default: block).
+[project]
+name = "plugiq-tools"
+version = "1.0.0"
+description = "Smart USB-C Cable Tester — probe capabilities & measure real-world throughput"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = [
 
-Adding Probes or Heuristics
----------------------------
-- Keep probes read‑only, time‑bounded, and optional (handle missing tools gracefully).
-- Parse outputs defensively; avoid over‑claiming capabilities.
-- Add reasons to classification so users understand conclusions.
-- Prefer OS‑specific modules/sections within `system_info.py` and extend `classify.py` accordingly.
+# e.g., "rich>=13", "textual>=0.58", "psutil", "typer>=0.12", "py-cpuinfo", etc.
 
-Testing & CI
-------------
-- Add focused tests near the logic you change.
-- Run locally: `pip install -e . && pip install pytest && pytest -q`.
-- CI runs on 3.8–3.12 via GitHub Actions (`.github/workflows/ci.yml`).
+]
 
-Release Process
----------------
-- Bump `__version__` and `pyproject.toml`.
-- Tag `vX.Y.Z` and push.
-- Create a GitHub Release and paste notes from `RELEASE_NOTES_*.md`.
-- Optional PyPI publish: configure `PYPI_API_TOKEN` secret; Release will trigger workflow.
+[project.scripts]
+plugiq = "usb_cable_tester.**main**:main"
+usbct = "usb_cable_tester.**main**:main" # optional alias
 
-Coding Standards
-----------------
-- Python 3.8+ typing (`Optional`, no `|` unions for 3.8 compat).
-- Small, composable modules; prefer clarity over cleverness.
-- Avoid one‑letter variables; keep functions short and explicit.
+[tool.setuptools.package-data]
+usb_cable_tester = ["py.typed"]
 
-Privacy & Network
------------------
-- No telemetry or external network calls. All detection is local.
-- Only read OS tooling outputs; do not store device identifiers beyond what’s needed for the session and saved results at the user’s request.
+In usb_cable_tester/**main**.py expose main() that wires your CLI/TUI. Then your README “Install from source” can add:
 
-Local Dev Quick Start
----------------------
-```
-pip install -e .
-python -m usb_cable_tester --wizard
-python -m usb_cable_tester --tui
-pytest -q
-```
+pip install .
+plugiq --help
+plugiq --wizard
+plugiq --tui
 
-Troubleshooting
----------------
-- TUI requires a TTY; on Windows without curses support, use `--wizard`.
-- For macOS USB/Thunderbolt details, `system_profiler` may report limited info without devices connected.
-- On Linux, richer data appears if `/sys/class/typec` and/or `boltctl` are available.
+(Your README already shows module-style invocation and flags like --wizard, --tui, --show-system, and banner style env var—great signal; this just smooths the UX to a single command.) ￼
+
+README polish (trust signals + clarity)
+• Put your ASCII banner + tagline right at the top (the one we made).
+• Add badges: MIT, Python versions, Tested OSes, Release tag.
+• Split Usage into quick “Do this first” tasks:
+• Probe: plugiq --show-system
+• Safe guided run: plugiq --wizard
+• Targeted speed test (with safe defaults): plugiq --run-speed-test --test-path ... --save
+• Add a “What PlugIQ infers vs guarantees” box so users understand the e-marker caveat and OS exposure limits. Your README already emphasizes OS caps and that throughput depends on the attached device; surface that in a bold callout. ￼
+• Add a Results format snippet (JSON example of a saved run) so folks know what “save” gives them.
+
+Safety & UX details (you’re already thinking about these)
+• Keep your preflight checks and “don’t write to system root / internal drive” guardrails front-and-center; you already note this in safety notes and wizard logic—good. Maybe print a one-line “Test file will be deleted” confirmation right before I/O starts. ￼
+• For Windows: print an honest capability level (e.g., “Limited USB-C detail available on this OS; falling back to PowerShell + device manager hints”), which your README already hints at. ￼
+
+CLI ergonomics
+• Short flags for common things:
+• -w/--wizard, -t/--tui, -p/--test-path, -s/--file-size-mb, -l/--label, -S/--save.
+• A --json switch to dump machine-readable output for automation.
+• A --diagnostics mode to print “how I figured this out” (USB tree, Thunderbolt link status, Linux type-C sysfs paths) without requiring users to spelunk logs.
+
+TUI niceties
+• Key hints footer: ←/→ tabs ↑/↓ select Enter run Q quit.
+• A compact mini-banner to avoid blasting the full art on every screen.
+• If using Textual/Rich, add a sparkline or simple bar for write speed progression.
+
+Tests & CI
+• Add a few unit tests for classification logic (USB 2.0 vs USB 3.2 Gen1/Gen2 vs USB4/TB) with synthetic inputs.
+• Add smoke tests that stub the filesystem for throughput to ensure flags parse and guardrails work.
+• Minimal GitHub Action: run pytest, ruff/flake8, and build a wheel. A release workflow can publish to PyPI when you tag vX.Y.Z.
+
+Versioning & releases
+• You’ve got CHANGELOG.md and a RELEASE_NOTES_v1.0.0.md—excellent. Automate release notes from tags and consider semantic versioning. ￼
+
+Roadmap items (you already listed them)
+• DP Alt Mode detection across OSes where APIs exist.
+• Active/passive detection on macOS/Windows if you can reach TB/USB4 descriptors.
+• Guided flows for storage/network/display to cover more real-world protocols. ￼
+
+Name & command
+• Keep the repo as PlugIQ-Tools and ship the binary as plugiq with usbct as a friendly alias. Your README already uses usb_cable_tester as the module name—clean to keep; just map it to plugiq. ￼
+
+If you want, I can generate: 1. a drop-in **main**.py (Typer or argparse), 2. a ready-to-paste GitHub Actions workflow for tests + packaging, and 3. a README top section with badges and install/usage blocks tuned to PlugIQ’s current features.
