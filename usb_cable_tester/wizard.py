@@ -9,6 +9,7 @@ from .speed_test import run_disk_speed_test
 from .classify import classify_result
 from .store import save_result
 from . import system_info as sysinfo
+from .banner import get_banner
 
 
 def _prompt_yes_no(msg: str, default: bool = True) -> bool:
@@ -51,6 +52,8 @@ def _format_vol(v: Volume) -> str:
 
 
 def run_wizard(initial_info: Dict[str, Any]) -> int:
+    print(get_banner())
+    print()
     print("USB-C Cable Tester — Guided Wizard")
     print("This wizard helps you safely test a cable by measuring throughput and checking system data.")
     print("No destructive operations are performed; a temporary file is written to the chosen path and removed after.")
@@ -150,4 +153,3 @@ def run_wizard(initial_info: Dict[str, Any]) -> int:
 
     print("Done. Unplug/replug another cable and run the wizard again to compare.")
     return 0
-

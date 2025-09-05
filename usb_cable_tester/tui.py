@@ -10,6 +10,7 @@ from .speed_test import run_disk_speed_test
 from .classify import classify_result
 from . import system_info as sysinfo
 from .store import save_result
+from .banner import get_banner
 
 
 def run_tui(initial_info: Optional[Dict[str, Any]] = None) -> int:
@@ -90,7 +91,11 @@ def _main(stdscr, info: Dict[str, Any]) -> int:
 
     while True:
         if state.step == 0:
-            body = [
+            body = []
+            for line in get_banner().splitlines():
+                body.append(line)
+            body += [
+                "",
                 "USB-C Cable Tester — TUI Wizard",
                 "",
                 "Safely measure throughput via a selected volume and infer cable capabilities.",

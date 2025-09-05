@@ -1,5 +1,14 @@
 USB-C Cable Tester (MVP)
 
+```
+PPPPPP  LL        UU   UU   GGGGG    IIIII    QQQQQ
+PP   PP LL        UU   UU  GG          II    QQ   QQ
+PPPPPP  LL        UU   UU  GG  GGG     II    QQ   QQ
+PP      LL        UU   UU  GG   GG     II    QQ  QQQ
+PP      LLLLLL     UUUUU    GGGGGG    IIIII   QQQQQQ
+```
+PlugIQ Cable Tester
+
 A cross‑platform CLI to help identify USB‑C cable capabilities and measure real‑world throughput using a connected device.
 
 What it can do now:
